@@ -74,7 +74,12 @@
                 },
                 {
                     "name": "AMAZON.StopIntent",
-                    "samples": []
+                    "samples": [
+                        "salir",
+                        "sal",
+                        "fuera",
+                        "basta"
+                    ]
                 },
                 {
                     "name": "AMAZON.CancelIntent",

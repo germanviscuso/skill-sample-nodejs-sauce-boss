@@ -186,7 +186,6 @@ const RecipeHandler = {
     // Touch Event Request
     if (handlerInput.requestEnvelope.request.type === 'Alexa.Presentation.APL.UserEvent') {
       itemName = (handlerInput.requestEnvelope.request.arguments[0]).toLowerCase();
-      console.log('touch item: ' + itemName);
     } else {
       // Voice Intent Request
       const itemSlot = handlerInput.requestEnvelope.request.intent.slots.Item;
@@ -484,7 +483,7 @@ function generateRecipeOutput(handlerInput, itemName) {
         token: 'sauce-boss',
         version: '1.0',
         document: getAPLDocs(locale).recipe,
-        datasources: constructRecipeDataSource(itemName, recipe, requestAttributes.t('HINT_TEMPLATE', itemName)),
+        datasources: constructRecipeDataSource(itemName, requestAttributes.t(itemName), recipe, requestAttributes.t('HINT_TEMPLATE', itemName)),
       })
         .addDirective({
           type: 'Alexa.Presentation.APL.ExecuteCommands',
@@ -561,14 +560,14 @@ function loadIfPresent(fileName, defaultToLoad) {
 }
 
 // Constructs the datasource object for the given sauce and recipe
-function constructRecipeDataSource(selectedSauce, recipe, hintString) {
+function constructRecipeDataSource(selectedSauce, selectedSauceName, recipe, hintString) {
   return {
     sauceBossData: {
       type: 'object',
       properties: {
         selectedSauceSsml: `<speak>${recipe}</speak>`,
         selectedSauce: selectedSauce,
-        selectSauceCaps: selectedSauce.toUpperCase(),
+        selectSauceCaps: selectedSauceName.toUpperCase(),
         selectedSauceImg: getRecipeImage(selectedSauce),
         hintString: hintString,
       },
