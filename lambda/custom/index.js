@@ -6,11 +6,24 @@ const Alexa = require('ask-sdk-core');
 const i18n = require('i18next');
 const sprintf = require('i18next-sprintf-postprocessor');
 
-const APLDocs = {
-  launch: require('./documents/launchRequest.json'),
-  recipe: require('./documents/recipeIntent.json'),
-  help: require('./documents/helpIntent.json'),
-};
+function getAPLDocs(locale) {
+  switch(locale){
+    case 'es-ES':
+    case 'es-MX':
+      return {
+        launch: require('./documents/launchRequest_es.json'),
+        recipe: require('./documents/recipeIntent_es.json'),
+        help: require('./documents/helpIntent_es.json')
+      }
+    case 'en-US':
+    default:
+      return {
+        launch: require('./documents/launchRequest.json'),
+        recipe: require('./documents/recipeIntent.json'),
+        help: require('./documents/helpIntent.json')
+      }
+  }
+}
 
 // List of the supported recipes in the skill
 const recipes = {
@@ -19,14 +32,25 @@ const recipes = {
     'honey mustard': 'To make honey mustard, mix mayonnaise, yellow mustard, Dijon mustard, honey, and lemon juice together in a bowl. Cover and chill in the refrigerator overnight.',
     'ranch': 'For ranch dressing, whisk together mayonnaise, sour cream, chives, parsley, dill, garlic powder, onion powder, salt and pepper in a large bowl. Cover and refrigerate for 30 minutes before serving.',
     'caesar': 'For Caesar dressing, combine lemon juice, vinegar, water, shredded parmesan cheese, Dijon mustard, garlic powder and pepper in a jar. Cover with a lid and shake well. Refrigerate until ready to use.',
-    'worcestershire': 'To make Worcestershire sauce, combine apple cider vinegar, water, soy sauce, brown sugar, mustard powder, onion powder, garlic powder, ground cinnamon, and a pinch of black pepper together in a saucepan; bring to a boil and cook until fragrant, about 45 seconds, then cool to room temperature.',
     'thousand island': 'For Thousand Island dressing, mix together mayonnaise, ketchup, sweet pickle relish, salt and pepper in a small bowl until thoroughly combined. Chill and serve.',
     'pesto': 'To make pesto, combine basil, garlic, Parmesan cheese, olive oil, and pine nuts in a food processor or blender. Blend to a smooth paste. Add parsley if desired.',
     'tartar': 'For tartar sauce, combine mayonnaise, chopped onion, sweet pickle relish, salt and pepper in a medium bowl. Mix well and let stand for at least 10 minutes before serving.',
     'pizza': 'To make pizza sauce, mix together tomato sauce and tomato paste in a medium bowl until smooth. Stir in oregano, dried minced garlic and paprika.',
     'cranberry': 'For cranberry sauce, dissolve sugar in orange juice in a saucepan over medium heat. Stir in cranberries and cook until they start to pop. Remove from heat and transfer the sauce to a bowl before serving.',
-    'secret': 'No need to butter me up, I can tell you\'re in a jam, but the secret sauce is safe with me.',
+    'secret': 'No need to butter me up, I can tell you\'re in a jam, but the secret sauce is safe with me.'
   },
+  RECIPE_ES_ES: {
+    'barbecue': 'Para hacer salsa barbacoa, mezcla azúcar moreno, ketchup, vinagre, y salsa Worcestershire en una batidora. Sazona con sal, pimienta, y pimienta cayena. Báte hasta que quede una salsa homogénea.',
+    'honey mustard': 'Para preparar salsa de mostaza y miel, mezcla mayonesa, mostaza dulce, mostaza de dijon, miel, y zumo de limón en un cuenco. Cubre y enfría en la nevera durante toda la noche.',
+    'ranch': 'Para la salsa ranchera, mezcle la mayonesa, la crema agria, las cebolletas, el perejil, el eneldo, el ajo en polvo, la cebolla en polvo, la sal y la pimienta en un tazón grande. Cubra y refrigere por 30 minutos antes de servir.',
+    'caesar': 'Para la salsa César, combine el zumo de limón, el vinagre, el agua, el queso parmesano rallado, la mostaza de Dijon, el ajo en polvo y la pimienta en un frasco. Cubrir con una tapa y agitar bien. Refrigere hasta que esté listo para su uso.',
+    'thousand island': 'Para la salsa mil islas, mezcle la mayonesa, el ketchup, la salsa de pepinillos dulces, la sal y la pimienta en un tazón pequeño hasta que estén bien mezclados. Enfriar y servir.',
+    'pesto': 'Para peparar el pesto, combine la albahaca, el ajo, el queso parmesano, el aceite de oliva y los piñones en un robot de cocina o licuadora. Mezclar hasta obtener una pasta suave. Agrega el perejil si lo deseas.',
+    'tartar': 'Para la salsa tártara, combine la mayonesa, la cebolla picada, el condimento de pepinillo dulce, la sal y la pimienta en un tazón mediano. Mezclar bien y dejar reposar durante al menos 10 minutos antes de servir.',
+    'pizza': 'Para hacer la salsa para pizza, mezcle la salsa de tomate y la pasta de tomate en un tazón mediano hasta que quede suave. Agregue el orégano, el ajo picado y el pimentón dulce.',
+    'cranberry': 'Para la salsa de arándanos, disuelva el azúcar en el zumo de naranja en una cacerola a fuego medio. Agregue los arándanos y cocine hasta que empiecen a reventar. Retire del fuego y vierta la salsa en un tazón antes de servir.',
+    'secret': 'No hace falta que me dores la píldora, ni le eches guindas al pavo, la salsa está a buen resguardo.'
+  }
 };
 
 /* CONSTANTS */
@@ -42,19 +66,64 @@ const languageStrings = {
       HELP_MESSAGE: 'You can ask questions such as, what\'s the recipe for a %s, or, you can say exit...Now, what can I help you with?',
       HELP_REPROMPT: 'You can say things like, what\'s the recipe for a %s, or you can say exit...Now, what can I help you with?',
       STOP_MESSAGE: 'Goodbye!',
+      ERROR_MESSAGE: 'I just had a glitch. Please try again. ',
       RECIPE_REPEAT_MESSAGE: 'Try saying repeat.',
       RECIPE_NOT_FOUND_WITH_ITEM_NAME: 'I\'m sorry, I currently do not know the recipe for %s. ',
       RECIPE_NOT_FOUND_WITHOUT_ITEM_NAME: 'I\'m sorry, I currently do not know that recipe. ',
       RECIPE_NOT_FOUND_REPROMPT: 'What else can I help with?',
       HINT_TEMPLATE: 'How do I make %s sauce?',
-    },
+      barbecue: 'barbecue',
+      'honey mustard': 'honey mustard',
+      ranch: 'ranch',
+      caesar: 'caesar',
+      'thousand island': 'thousand island',
+      pest: 'pesto',
+      tartar: 'tartar',
+      pizza: 'pizza',
+      cranberry: 'cranberry',
+      secret: 'secret'
+    }
   },
   'en-US': {
     translation: {
       RECIPES: recipes.RECIPE_EN_US,
       SKILL_NAME: 'Sauce Boss',
-    },
+    }
   },
+  'es': {
+    translation: {
+      RECIPES: recipes.RECIPE_ES_ES,
+      SKILL_NAME: 'Rey de la Salsa',
+      WELCOME_MESSAGE: 'Bienvenidos al %s. Puedes hacerme una pregunta como, Cuál es la receta de la salsa %s? ... Bien, cómo puedo ayudarte?',
+      WELCOME_REPROMPT: 'Si necesitas entender qué puedes hacer con la skill, di ayuda.  Qué te gustaría hacer?',
+      DISPLAY_CARD_TITLE: '%s  - Receta de %s',
+      HELP_MESSAGE: 'Puedes preguntar cosas como, cuál es la receta de la salsa %s, o, puedes decir salir...Cómo puedo ayudarte?',
+      HELP_REPROMPT: 'Puedes decirme cosas como por ejemplo, cuál es la receta de la salsa %s, o, puedes decir salir...Cómo puedo ayudarte?',
+      STOP_MESSAGE: 'Hasta luego!',
+      ERROR_MESSAGE: 'No se que ha pasado. Por favor inténtalo otra vez. ',
+      RECIPE_REPEAT_MESSAGE: 'Intenta decir Repite.',
+      RECIPE_NOT_FOUND_WITH_ITEM_NAME: 'Lo siento, ahora mismo no conozco la receta de %s. ',
+      RECIPE_NOT_FOUND_WITHOUT_ITEM_NAME: 'Lo siento, aun no conozco esa receta.',
+      RECIPE_NOT_FOUND_REPROMPT: 'Con qué otra cosa te puedo ayudar?',
+      HINT_TEMPLATE: 'Cómo puedo elaborar salsa %s ?',
+      barbecue: 'barbacoa',
+      'honey mustard': 'moztaza y miel',
+      ranch: 'ranchera',
+      caesar: 'césar',
+      'thousand island': 'mil islas',
+      pesto: 'pesto',
+      tartar: 'tártara',
+      pizza: 'pizza',
+      cranberry: 'arándanos',
+      secret: 'secreta'
+    }
+  },
+  'es-ES': {
+    translation: {
+      RECIPES: recipes.RECIPE_ES_ES,
+      SKILL_NAME: 'Rey de la Salsa',
+    }
+  }
 };
 
 /* INTENT HANDLERS */
@@ -66,20 +135,22 @@ const LaunchRequestHandler = {
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
-    const item = requestAttributes.t(getRandomItem(Object.keys(recipes.RECIPE_EN_US)));
+    const item = requestAttributes.t(getRandomItem(Object.keys(requestAttributes.t('RECIPES'))));
 
-    const speakOutput = requestAttributes.t('WELCOME_MESSAGE', requestAttributes.t('SKILL_NAME'), item);
+    const speakOutput = requestAttributes.t('WELCOME_MESSAGE', requestAttributes.t('SKILL_NAME'), requestAttributes.t(item));
     const repromptOutput = requestAttributes.t('WELCOME_REPROMPT');
 
     handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
     const responseBuilder = handlerInput.responseBuilder;
+    const locale = handlerInput.requestEnvelope.request.locale;
 
     if (supportsAPL(handlerInput)) {
+      console.log(1);
       responseBuilder.addDirective({
         type: 'Alexa.Presentation.APL.RenderDocument',
         version: '1.0',
-        document: APLDocs.launch,
+        document: getAPLDocs(locale).launch,
         datasources: {
           sauceBossData: {
             type: 'object',
@@ -89,9 +160,9 @@ const LaunchRequestHandler = {
             transformers: [{
               inputPath: 'hintString',
               transformer: 'textToHint',
-            }],
-          },
-        },
+            }]
+          }
+        }
       });
     }
 
@@ -115,18 +186,19 @@ const RecipeHandler = {
     // Touch Event Request
     if (handlerInput.requestEnvelope.request.type === 'Alexa.Presentation.APL.UserEvent') {
       itemName = (handlerInput.requestEnvelope.request.arguments[0]).toLowerCase();
+      console.log('touch item: ' + itemName);
     } else {
       // Voice Intent Request
       const itemSlot = handlerInput.requestEnvelope.request.intent.slots.Item;
       if (itemSlot && itemSlot.value) {
-        itemName = itemSlot.value.toLowerCase();
+        itemName = itemSlot.resolutions.resolutionsPerAuthority[0].values[0].value.name.toLowerCase();
       }
     }
     // special cleanup for bbq sauce
-    itemName = itemName.replace('bbq', 'barbecue').replace(' sauce', '');
+    //itemName = itemName.replace('bbq', 'barbecue').replace(' sauce', '');
 
     return generateRecipeOutput(handlerInput, itemName);
-  },
+  }
 };
 
 const HelpHandler = {
@@ -138,19 +210,20 @@ const HelpHandler = {
     const requestAttributes = handlerInput.attributesManager.getRequestAttributes();
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
-    const item = requestAttributes.t(getRandomItem(Object.keys(recipes.RECIPE_EN_US)));
+    const item = requestAttributes.t(getRandomItem(Object.keys(requestAttributes.t('RECIPES'))));
 
     sessionAttributes.speakOutput = requestAttributes.t('HELP_MESSAGE', item);
     sessionAttributes.repromptSpeech = requestAttributes.t('HELP_REPROMPT', item);
 
     const responseBuilder = handlerInput.responseBuilder;
+    const locale = handlerInput.requestEnvelope.request.locale;
 
     if (supportsAPL(handlerInput)) {
       responseBuilder.addDirective({
         type: 'Alexa.Presentation.APL.RenderDocument',
         version: '1.0',
         datasources: recipes,
-        document: APLDocs.help,
+        document: getAPLDocs(locale).help,
       });
     }
 
@@ -158,7 +231,7 @@ const HelpHandler = {
       .speak(sessionAttributes.speakOutput)
       .reprompt(sessionAttributes.repromptSpeech)
       .getResponse();
-  },
+  }
 };
 
 const PreviousHandler = {
@@ -219,7 +292,7 @@ const PreviousHandler = {
     }
     // no actionable history, so just go to launch
     return LaunchRequestHandler.handle(handlerInput);
-  },
+  }
 };
 
 const RepeatHandler = {
@@ -234,7 +307,7 @@ const RepeatHandler = {
       .speak(sessionAttributes.speakOutput)
       .reprompt(sessionAttributes.repromptSpeech)
       .getResponse();
-  },
+  }
 };
 
 const ExitHandler = {
@@ -249,8 +322,9 @@ const ExitHandler = {
 
     return handlerInput.responseBuilder
       .speak(speakOutput)
+      .withShouldEndSession(true)
       .getResponse();
-  },
+  }
 };
 
 const SessionEndedRequestHandler = {
@@ -261,7 +335,7 @@ const SessionEndedRequestHandler = {
   handle(handlerInput) {
     console.log(`Session ended with reason: ${JSON.stringify(handlerInput.requestEnvelope)}`);
     return handlerInput.responseBuilder.getResponse();
-  },
+  }
 };
 
 const ErrorHandler = {
@@ -286,7 +360,7 @@ const ErrorHandler = {
         .speak(speakOutput)
         .getResponse();
     }
-  },
+  }
 };
 
 const LocalizationInterceptor = {
@@ -315,7 +389,7 @@ const LocalizationInterceptor = {
     attributes.t = function translate(...args) {
       return localizationClient.localize(...args);
     };
-  },
+  }
 };
 
 const RequestHistoryInterceptor = {
@@ -348,20 +422,20 @@ const RequestHistoryInterceptor = {
     requestHistory.push(currentRequest);
 
     sessionAttributes.requestHistory = requestHistory;
-  },
+  }
 };
 
 const RequestLog = {
   process(handlerInput) {
     console.log(`REQUEST ENVELOPE = ${JSON.stringify(handlerInput.requestEnvelope)}`);
-  },
+  }
 };
 
 const ResponseLog = {
   process(handlerInput) {
     console.log(`RESPONSE BUILDER = ${JSON.stringify(handlerInput)}`);
     console.log(`RESPONSE = ${JSON.stringify(handlerInput.responseBuilder.getResponse())}`);
-  },
+  }
 };
 
 /* LAMBDA SETUP */
@@ -402,13 +476,14 @@ function generateRecipeOutput(handlerInput, itemName) {
     handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
 
     const responseBuilder = handlerInput.responseBuilder;
+    const locale = handlerInput.requestEnvelope.request.locale;
 
     if (supportsAPL(handlerInput)) {
       return responseBuilder.addDirective({
         type: 'Alexa.Presentation.APL.RenderDocument',
         token: 'sauce-boss',
         version: '1.0',
-        document: APLDocs.recipe,
+        document: getAPLDocs(locale).recipe,
         datasources: constructRecipeDataSource(itemName, recipe, requestAttributes.t('HINT_TEMPLATE', itemName)),
       })
         .addDirective({
@@ -466,14 +541,13 @@ function getRandomItem(arrayOfItems) {
 // this function will get the Recipe Image to display on screen
 function getRecipeImage(selectedSauce) {
   const imageSourceStem = 'https://s3.amazonaws.com/ask-samples-resources/images/sauce-boss/';
+  console.log(`${imageSourceStem}${selectedSauce}-sauce-500x500.png`);
   return `${imageSourceStem}${selectedSauce}-sauce-500x500.png`;
 }
 
 function supportsAPL(handlerInput) {
-  const supportedInterfaces = handlerInput.requestEnvelope.context
-    .System.device.supportedInterfaces;
-  const aplInterface = supportedInterfaces['Alexa.Presentation.APL'];
-  return aplInterface != null && aplInterface !== undefined;
+  const {supportedInterfaces} = handlerInput.requestEnvelope.context.System.device;
+  return supportedInterfaces['Alexa.Presentation.APL'] ? true : false;
 }
 
 function loadIfPresent(fileName, defaultToLoad) {
@@ -512,7 +586,7 @@ function constructRecipeDataSource(selectedSauce, recipe, hintString) {
         inputPath: 'hintString',
         transformer: 'textToHint',
       },
-      ],
-    },
-  };
+      ]
+    }
+  }
 }

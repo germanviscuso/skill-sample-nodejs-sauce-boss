@@ -14,6 +14,6 @@ module.exports = {
     'tartar': 'For tartar sauce, combine mayonnaise, chopped onion, sweet pickle relish, salt and pepper in a medium bowl. Mix well and let stand for at least 10 minutes before serving.',
     'pizza': 'To make pizza sauce, mix together tomato sauce and tomato paste in a medium bowl until smooth. Stir in oregano, dried minced garlic and paprika.',
     'cranberry': 'For cranberry sauce, dissolve sugar in orange juice in a saucepan over medium heat. Stir in cranberries and cook until they start to pop. Remove from heat and transfer the sauce to a bowl before serving.',
-    'secret': 'No need to butter me up, I can tell you\'re in a jam, but the secret sauce is safe with me.',
+    'secret': 'No need to butter me up, I can tell you\'re in a jam, but the secret sauce is safe with me.'
   },
 };

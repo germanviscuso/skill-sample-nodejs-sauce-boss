@@ -19,6 +19,24 @@
           ],
           "name": "Sauce Boss",
           "description": "Got a passion for unique and interesting sauces? Do you buy scrumptious, rare condiments only to have them expire before use? Running out of space in your fridge? Facing judgement from friends or family for lackluster cooking skill?!? Have no fear, Sauce Boss is here! Sauce Boss will help you make all sorts of fascinating sauces from basic condiments and spices that you keep around your kitchen. Just ask Sauce Boss for a sauce you want to whip up and you'll receive a simple, easy-to-follow recipe to jazz up any dish you make, wow your folks, please your appetite and save space in your fridge. YUM!!!!"
+        },
+        "es-ES": {
+          "summary": "El Rey de la Salsa te ayudará a preparar ricas salsas con condimentos y especias que guardas en tu alacena.",
+          "examplePhrases": [
+            "Alexa abre Rey de la Salsa",
+            "Alexa pregunta a Rey de la Salsa cómo se elabora una salsa barbacoa",
+            "Alexa pregunta a Rey de la Salsa como hago salsa barbacoa"
+          ],
+          "keywords": [
+            "salsa",
+            "receta",
+            "cocina",
+            "guisar",
+            "comida",
+            "cómo se hace"
+          ],
+          "name": "Rey de la Salsa",
+          "description": "Eres un salsero y no bailas? Te gusta comprar especias y condimientos pero se quedan en tu alacena hasta que caducan? Te has quedado sin espacio en la nevera? Tus amigos y familia se ríen de tus habilidades culinarias?!? No tengas miedo, El Rey de la Salsa está aquí para ayudarte. Solo dile al Rey de la Salsa qué salsa quieres preparar y te guiará en su preparación para que acompañes cualquier plato e impresiones a tus invitados, satisfagas tu gula y dejes espacio en la nevera. Riquísimo!!!!"
         }
       },
       "isAvailableWorldwide": true,
